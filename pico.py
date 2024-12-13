@@ -158,7 +158,10 @@ def run():
     else:
         # Connect to MQTT broker, start MQTT client
         client = connect_mqtt()
-        publish_discovery()
+        publish_temp_discovery()
+        
+        if dht11_connected:
+            publish_hum_discovery()
         
         # Continuously checking for messages
         while True:
