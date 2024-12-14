@@ -8,7 +8,7 @@ from umqtt.simple import MQTTClient
 import ujson
 import config
 from core import getId, initialize_wifi
-
+from time import sleep
 
 UNIQUE_ID = getId()
 # Constants for MQTT Topics
@@ -63,6 +63,7 @@ def publish_temp_discovery():
         "unique_id": f"temp_{UNIQUE_ID}",
         "device": {
             "manufacturer": "Wechant Loup",
+            "model": "Pico Temperature",
             "identifiers": UNIQUE_ID,
         },
         "state_topic": STATE_TEMP_TOPIC,
@@ -84,6 +85,7 @@ def publish_hum_discovery():
         "unique_id": f"hum_{UNIQUE_ID}",
         "device": {
             "manufacturer": "Wechant Loup",
+            "model": "Pico Humidity",
             "identifiers": UNIQUE_ID,
         },
         "state_topic": STATE_HUM_TOPIC,
@@ -146,7 +148,6 @@ def init():
     if not has_sensor:
         print("No temperature sensor")
         return False
-    wlan.active(True)
     led_G_pin.low()
     return True
 
@@ -165,19 +166,20 @@ def run():
         
         # Continuously checking for messages
         while True:
-            sleep(1)
             client.check_msg()
             print('Loop running')
             
             #Get the measurements from the sensor
             temperature = readTemperature()
             print(f"Temperature: {temperature}°C")
-            client.publish(TEMPERATURE_TOPIC, temperature)
+            client.publish(STATE_TEMP_TOPIC, str(temperature))
             
             if dht11_connected:
                 humidity = readHumidity()
                 print(f"Humidity: {humidity}%")
-                client.publish(HUMIDITY_TOPIC, humidity)
+                client.publish(STATE_HUM_TOPIC, str(humidity))
+            
+            sleep(30)
 
 if init():
     while True:
