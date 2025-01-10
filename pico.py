@@ -59,14 +59,15 @@ def connect_mqtt():
 
 def publish_temp_discovery():
     payload = {
-        "name": "Pico Temperature",
+        "device_class": "temperature",
+        "state_topic": STATE_TEMP_TOPIC,
+        "name": "Temperature",
         "unique_id": f"temp_{UNIQUE_ID}",
         "device": {
             "manufacturer": "Wechant Loup",
             "model": "Pico Temperature",
             "identifiers": UNIQUE_ID,
         },
-        "state_topic": STATE_TEMP_TOPIC,
     }
     
     # Convert payload to JSON string for publishing
@@ -81,14 +82,15 @@ def publish_temp_discovery():
 
 def publish_hum_discovery():
     payload = {
-        "name": "Pico Humidity",
+        "device_class": "humidity",
+        "state_topic": STATE_HUM_TOPIC,
+        "name": "Humidity",
         "unique_id": f"hum_{UNIQUE_ID}",
         "device": {
             "manufacturer": "Wechant Loup",
             "model": "Pico Humidity",
             "identifiers": UNIQUE_ID,
         },
-        "state_topic": STATE_HUM_TOPIC,
     }
     
     # Convert payload to JSON string for publishing
@@ -171,7 +173,7 @@ def run():
             
             #Get the measurements from the sensor
             temperature = readTemperature()
-            print(f"Temperature: {temperature}°C")
+            print(f"Temperature: {temperature}{str(chr(176))}C")
             client.publish(STATE_TEMP_TOPIC, str(temperature))
             
             if dht11_connected:
